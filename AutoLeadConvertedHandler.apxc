@@ -1,0 +1,18 @@
+public class AutoLeadConvertedHandler {
+
+    public static void autoConvertLeads(Set<Id> setOfLeadIds){
+        LeadStatus convertLeadStatus = [Select Id,MasterLabel from LeadStatus where isConverted = true limit 1];
+        List<Database.LeadConvert> massLeadConvert=new List<Database.LeadConvert>();
+        for(Id currentLead : setOfLeadIds){
+            Database.LeadConvert LeadConvert=new Database.LeadConvert();
+            LeadConvert.setLeadId(currentLead);
+            LeadConvert.setConvertedStatus(convertLeadStatus.MasterLabel);
+            LeadConvert.setDoNotCreateOpportunity(false); // This line is used if you want to create opportunity on auto lead conversion then set False, Otherwise True.
+            massLeadConvert.add(LeadConvert);
+        }
+
+        if(!massLeadConvert.isEmpty()){
+            List<Database.LeadConvertResult> lcr=Database.convertLead(massLeadConvert);
+        }
+    }
+}
